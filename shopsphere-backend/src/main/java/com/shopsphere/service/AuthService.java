@@ -3,9 +3,13 @@ package com.shopsphere.service;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.shopsphere.dto.LoginRequest;
+import com.shopsphere.dto.LoginResponse;
 import com.shopsphere.dto.RegisterRequest;
 import com.shopsphere.dto.UserResponse;
 import com.shopsphere.entity.Role;
@@ -13,6 +17,7 @@ import com.shopsphere.entity.User;
 import com.shopsphere.exception.DuplicateEmailException;
 import com.shopsphere.repository.RoleRepository;
 import com.shopsphere.repository.UserRepository;
+import com.shopsphere.security.JwtService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +30,8 @@ public class AuthService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     public UserResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -45,6 +52,25 @@ public class AuthService {
 
         User saved = userRepository.save(user);
         return toResponse(saved);
+    }
+
+    public LoginResponse login(LoginRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found: " + request.getEmail()));
+
+        Set<String> roleNames = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+        String token = jwtService.generateToken(user.getEmail(), roleNames);
+
+        return new LoginResponse(token, "Bearer", user.getId(), user.getEmail(), roleNames);
+    }
+
+    public UserResponse getProfile(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found: " + email));
+        return toResponse(user);
     }
 
     private UserResponse toResponse(User user) {
