@@ -21,10 +21,30 @@ public class NotificationService {
     @Value("${spring.mail.username}")
     private String fromAddress;
 
+    @Value("${app.base-url}")
+    private String baseUrl;
+
     @Async
     public void sendRegistrationEmail(String toEmail, String firstName) {
         send(toEmail, "Welcome to ShopSphere",
                 "Hi " + firstName + ",\n\nThanks for registering with ShopSphere! We're glad to have you.");
+    }
+
+    @Async
+    public void sendVerificationEmail(String toEmail, String firstName, String token) {
+        String link = baseUrl + "/api/auth/verify-email?token=" + token;
+        send(toEmail, "Verify your ShopSphere email",
+                "Hi " + firstName + ",\n\nPlease verify your email by clicking the link below:\n" + link
+                        + "\n\nThis link expires in 24 hours.");
+    }
+
+    @Async
+    public void sendPasswordResetEmail(String toEmail, String firstName, String token) {
+        String link = baseUrl + "/api/auth/reset-password?token=" + token;
+        send(toEmail, "Reset your ShopSphere password",
+                "Hi " + firstName + ",\n\nA password reset was requested for your account. Use this token to reset it:\n"
+                        + token + "\n\nOr follow this link: " + link + "\n\nThis link expires in 1 hour. "
+                        + "If you didn't request this, you can safely ignore this email.");
     }
 
     @Async
