@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,16 +14,19 @@ import org.springframework.stereotype.Service;
 import com.shopsphere.dto.ForgotPasswordRequest;
 import com.shopsphere.dto.LoginRequest;
 import com.shopsphere.dto.LoginResponse;
+import com.shopsphere.dto.RefreshTokenRequest;
 import com.shopsphere.dto.RegisterRequest;
 import com.shopsphere.dto.ResendVerificationRequest;
 import com.shopsphere.dto.ResetPasswordRequest;
 import com.shopsphere.dto.UserResponse;
+import com.shopsphere.entity.RefreshToken;
 import com.shopsphere.entity.Role;
 import com.shopsphere.entity.User;
 import com.shopsphere.exception.DuplicateEmailException;
 import com.shopsphere.exception.EmailNotVerifiedException;
 import com.shopsphere.exception.InvalidTokenException;
 import com.shopsphere.exception.ResourceNotFoundException;
+import com.shopsphere.repository.RefreshTokenRepository;
 import com.shopsphere.repository.RoleRepository;
 import com.shopsphere.repository.UserRepository;
 import com.shopsphere.security.JwtService;
@@ -37,10 +41,14 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final NotificationService notificationService;
+
+    @Value("${app.refresh-token.expiration-days}")
+    private long refreshTokenExpirationDays;
 
     public UserResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -83,9 +91,47 @@ public class AuthService {
         }
 
         Set<String> roleNames = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
-        String token = jwtService.generateToken(user.getEmail(), roleNames);
+        String accessToken = jwtService.generateToken(user.getEmail(), roleNames);
+        RefreshToken refreshToken = createRefreshToken(user);
 
-        return new LoginResponse(token, "Bearer", user.getId(), user.getEmail(), roleNames);
+        return new LoginResponse(accessToken, refreshToken.getToken(), "Bearer", user.getId(), user.getEmail(), roleNames);
+    }
+
+    public LoginResponse refresh(RefreshTokenRequest request) {
+        RefreshToken existing = refreshTokenRepository.findByToken(request.getRefreshToken())
+                .orElseThrow(() -> new InvalidTokenException("Invalid refresh token"));
+
+        if (Boolean.TRUE.equals(existing.getRevoked()) || existing.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new InvalidTokenException("Refresh token is expired or has been revoked");
+        }
+
+        existing.setRevoked(true);
+        refreshTokenRepository.save(existing);
+
+        User user = existing.getUser();
+        Set<String> roleNames = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+        String accessToken = jwtService.generateToken(user.getEmail(), roleNames);
+        RefreshToken newRefreshToken = createRefreshToken(user);
+
+        return new LoginResponse(accessToken, newRefreshToken.getToken(), "Bearer", user.getId(), user.getEmail(), roleNames);
+    }
+
+    public void logout(RefreshTokenRequest request) {
+        refreshTokenRepository.findByToken(request.getRefreshToken()).ifPresent(rt -> {
+            rt.setRevoked(true);
+            refreshTokenRepository.save(rt);
+        });
+        // Idempotent: logging out with an unknown/already-invalid token still succeeds silently.
+    }
+
+    private RefreshToken createRefreshToken(User user) {
+        RefreshToken refreshToken = RefreshToken.builder()
+                .user(user)
+                .token(UUID.randomUUID().toString())
+                .expiresAt(LocalDateTime.now().plusDays(refreshTokenExpirationDays))
+                .revoked(false)
+                .build();
+        return refreshTokenRepository.save(refreshToken);
     }
 
     public void verifyEmail(String token) {

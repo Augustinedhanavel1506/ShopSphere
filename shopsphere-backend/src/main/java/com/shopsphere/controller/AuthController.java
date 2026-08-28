@@ -13,6 +13,7 @@ import com.shopsphere.dto.ForgotPasswordRequest;
 import com.shopsphere.dto.LoginRequest;
 import com.shopsphere.dto.LoginResponse;
 import com.shopsphere.dto.MessageResponse;
+import com.shopsphere.dto.RefreshTokenRequest;
 import com.shopsphere.dto.RegisterRequest;
 import com.shopsphere.dto.ResendVerificationRequest;
 import com.shopsphere.dto.ResetPasswordRequest;
@@ -38,6 +39,17 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<LoginResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(authService.refresh(request));
+    }
+
+    @PostMapping("/logout")
+    public MessageResponse logout(@Valid @RequestBody RefreshTokenRequest request) {
+        authService.logout(request);
+        return new MessageResponse("Logged out successfully.");
     }
 
     @GetMapping("/verify-email")
