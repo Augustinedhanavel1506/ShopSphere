@@ -18,7 +18,10 @@ public class OrderResponse {
     private BigDecimal subtotal;
     private String couponCode;
     private BigDecimal discountAmount;
+    private BigDecimal taxAmount;
     private BigDecimal totalAmount;
+    private String trackingNumber;
+    private String carrier;
     private ShippingAddressResponse shippingAddress;
     private List<OrderItemResponse> items;
     private LocalDateTime createdAt;

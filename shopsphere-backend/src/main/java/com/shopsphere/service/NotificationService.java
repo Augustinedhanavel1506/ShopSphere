@@ -46,6 +46,12 @@ public class NotificationService {
                 "Your order #" + orderId + " has been cancelled. If this wasn't you, please contact support.");
     }
 
+    @Async
+    public void sendOrderStatusUpdateEmail(String toEmail, Long orderId, String newStatus) {
+        send(toEmail, "Order Update - #" + orderId,
+                "Your order #" + orderId + " status has been updated to: " + newStatus + ".");
+    }
+
     private void send(String to, String subject, String body) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();

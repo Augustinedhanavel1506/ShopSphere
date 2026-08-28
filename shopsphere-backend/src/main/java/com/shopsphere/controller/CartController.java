@@ -47,6 +47,16 @@ public class CartController {
         return cartService.removeItem(authentication.getName(), productId);
     }
 
+    @PostMapping("/items/{productId}/save-for-later")
+    public CartResponse saveForLater(Authentication authentication, @PathVariable Long productId) {
+        return cartService.saveForLater(authentication.getName(), productId);
+    }
+
+    @PostMapping("/items/{productId}/move-to-cart")
+    public CartResponse moveToCart(Authentication authentication, @PathVariable Long productId) {
+        return cartService.moveToCart(authentication.getName(), productId);
+    }
+
     @DeleteMapping
     public ResponseEntity<Void> clearCart(Authentication authentication) {
         cartService.clearCart(authentication.getName());

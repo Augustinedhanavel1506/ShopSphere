@@ -1,6 +1,7 @@
 package com.shopsphere.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -44,14 +45,35 @@ public class CartService {
 
         if (existing.isPresent()) {
             existing.get().setQuantity(newQuantity);
+            existing.get().setSaved(false);
         } else {
             cart.getItems().add(CartItem.builder()
                     .cart(cart)
                     .product(product)
                     .quantity(newQuantity)
+                    .saved(false)
                     .build());
         }
 
+        return toResponse(cartRepository.save(cart));
+    }
+
+    public CartResponse saveForLater(String email, Long productId) {
+        Cart cart = getOrCreateCart(email);
+        CartItem item = findItem(cart, productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product " + productId + " is not in the cart"));
+
+        item.setSaved(true);
+        return toResponse(cartRepository.save(cart));
+    }
+
+    public CartResponse moveToCart(String email, Long productId) {
+        Cart cart = getOrCreateCart(email);
+        CartItem item = findItem(cart, productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product " + productId + " is not saved for later"));
+
+        validateStock(productId, item.getQuantity());
+        item.setSaved(false);
         return toResponse(cartRepository.save(cart));
     }
 
@@ -79,7 +101,7 @@ public class CartService {
 
     public void clearCart(String email) {
         Cart cart = getOrCreateCart(email);
-        cart.getItems().clear();
+        cart.getItems().removeIf(item -> !Boolean.TRUE.equals(item.getSaved()));
         cartRepository.save(cart);
     }
 
@@ -113,15 +135,14 @@ public class CartService {
     }
 
     private CartResponse toResponse(Cart cart) {
-        var items = cart.getItems().stream()
-                .map(item -> CartItemResponse.builder()
-                        .id(item.getId())
-                        .productId(item.getProduct().getId())
-                        .productName(item.getProduct().getName())
-                        .unitPrice(item.getProduct().getPrice())
-                        .quantity(item.getQuantity())
-                        .lineTotal(item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                        .build())
+        List<CartItemResponse> items = cart.getItems().stream()
+                .filter(item -> !Boolean.TRUE.equals(item.getSaved()))
+                .map(this::toItemResponse)
+                .toList();
+
+        List<CartItemResponse> savedItems = cart.getItems().stream()
+                .filter(item -> Boolean.TRUE.equals(item.getSaved()))
+                .map(this::toItemResponse)
                 .toList();
 
         int totalItems = items.stream().mapToInt(CartItemResponse::getQuantity).sum();
@@ -132,8 +153,20 @@ public class CartService {
         return CartResponse.builder()
                 .id(cart.getId())
                 .items(items)
+                .savedItems(savedItems)
                 .totalItems(totalItems)
                 .totalPrice(totalPrice)
+                .build();
+    }
+
+    private CartItemResponse toItemResponse(CartItem item) {
+        return CartItemResponse.builder()
+                .id(item.getId())
+                .productId(item.getProduct().getId())
+                .productName(item.getProduct().getName())
+                .unitPrice(item.getProduct().getPrice())
+                .quantity(item.getQuantity())
+                .lineTotal(item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .build();
     }
 }

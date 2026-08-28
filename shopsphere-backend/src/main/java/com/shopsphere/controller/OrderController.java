@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shopsphere.dto.CheckoutRequest;
 import com.shopsphere.dto.OrderResponse;
+import com.shopsphere.dto.OrderStatusUpdateRequest;
 import com.shopsphere.service.OrderService;
 
 import jakarta.validation.Valid;
@@ -46,6 +48,12 @@ public class OrderController {
     @PutMapping("/{id}/cancel")
     public OrderResponse cancel(Authentication authentication, @PathVariable Long id) {
         return orderService.cancelOrder(authentication.getName(), isAdmin(authentication), id);
+    }
+
+    @PutMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public OrderResponse updateStatus(@PathVariable Long id, @Valid @RequestBody OrderStatusUpdateRequest request) {
+        return orderService.updateStatus(id, request);
     }
 
     private boolean isAdmin(Authentication authentication) {

@@ -1,8 +1,14 @@
 package com.shopsphere.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
@@ -12,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.shopsphere.dto.CheckoutRequest;
 import com.shopsphere.dto.OrderItemResponse;
 import com.shopsphere.dto.OrderResponse;
+import com.shopsphere.dto.OrderStatusUpdateRequest;
 import com.shopsphere.dto.ShippingAddressRequest;
 import com.shopsphere.dto.ShippingAddressResponse;
 import com.shopsphere.entity.Address;
@@ -35,6 +42,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrderService {
 
+    private static final Map<OrderStatus, Set<OrderStatus>> ALLOWED_TRANSITIONS = new EnumMap<>(OrderStatus.class);
+
+    static {
+        ALLOWED_TRANSITIONS.put(OrderStatus.PAID, EnumSet.of(OrderStatus.CONFIRMED, OrderStatus.CANCELLED));
+        ALLOWED_TRANSITIONS.put(OrderStatus.CONFIRMED, EnumSet.of(OrderStatus.PROCESSING, OrderStatus.CANCELLED));
+        ALLOWED_TRANSITIONS.put(OrderStatus.PROCESSING, EnumSet.of(OrderStatus.SHIPPED, OrderStatus.CANCELLED));
+        ALLOWED_TRANSITIONS.put(OrderStatus.SHIPPED, EnumSet.of(OrderStatus.DELIVERED));
+    }
+
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
@@ -43,19 +59,26 @@ public class OrderService {
     private final NotificationService notificationService;
     private final AddressService addressService;
 
+    @Value("${app.tax.rate}")
+    private double taxRate;
+
     @Transactional
     public OrderResponse checkout(String email, CheckoutRequest request) {
         User user = findUserOrThrow(email);
 
         Cart cart = cartRepository.findByUserId(user.getId())
-                .filter(c -> !c.getItems().isEmpty())
+                .filter(c -> c.getItems().stream().anyMatch(item -> !Boolean.TRUE.equals(item.getSaved())))
                 .orElseThrow(() -> new InvalidOrderStateException("Your cart is empty"));
+
+        List<CartItem> activeItems = cart.getItems().stream()
+                .filter(item -> !Boolean.TRUE.equals(item.getSaved()))
+                .toList();
 
         ShippingAddressRequest shippingAddress = resolveShippingAddress(email, request);
         Order order = buildOrderShell(user, shippingAddress);
         BigDecimal total = BigDecimal.ZERO;
 
-        for (CartItem cartItem : cart.getItems()) {
+        for (CartItem cartItem : activeItems) {
             Product product = cartItem.getProduct();
 
             inventoryService.adjustQuantity(product.getId(), -cartItem.getQuantity());
@@ -79,11 +102,15 @@ public class OrderService {
             order.setCouponCode(coupon.getCode());
         }
 
+        BigDecimal afterDiscount = total.subtract(discount);
+        BigDecimal tax = afterDiscount.multiply(BigDecimal.valueOf(taxRate)).setScale(2, RoundingMode.HALF_UP);
+
         order.setDiscountAmount(discount);
-        order.setTotalAmount(total.subtract(discount));
+        order.setTaxAmount(tax);
+        order.setTotalAmount(afterDiscount.add(tax));
         Order saved = orderRepository.save(order);
 
-        cart.getItems().clear();
+        cart.getItems().removeIf(item -> !Boolean.TRUE.equals(item.getSaved()));
         cartRepository.save(cart);
 
         notificationService.sendOrderConfirmationEmail(user.getEmail(), saved.getId(), saved.getTotalAmount());
@@ -132,6 +159,36 @@ public class OrderService {
         return toResponse(saved);
     }
 
+    @Transactional
+    public OrderResponse updateStatus(Long orderId, OrderStatusUpdateRequest request) {
+        Order order = findOrderOrThrow(orderId);
+        OrderStatus current = order.getStatus();
+        OrderStatus target = request.getStatus();
+
+        Set<OrderStatus> allowed = ALLOWED_TRANSITIONS.getOrDefault(current, Set.of());
+        if (!allowed.contains(target)) {
+            throw new InvalidOrderStateException("Cannot transition order from " + current + " to " + target);
+        }
+
+        if (target == OrderStatus.CANCELLED) {
+            for (OrderItem item : order.getItems()) {
+                inventoryService.adjustQuantity(item.getProduct().getId(), item.getQuantity());
+            }
+        }
+
+        if (target == OrderStatus.SHIPPED) {
+            order.setTrackingNumber(request.getTrackingNumber());
+            order.setCarrier(request.getCarrier());
+        }
+
+        order.setStatus(target);
+        Order saved = orderRepository.save(order);
+
+        notificationService.sendOrderStatusUpdateEmail(order.getUser().getEmail(), saved.getId(), target.name());
+
+        return toResponse(saved);
+    }
+
     private ShippingAddressRequest resolveShippingAddress(String email, CheckoutRequest request) {
         if (request.getAddressId() != null) {
             Address address = addressService.findOwnedOrThrow(email, request.getAddressId());
@@ -160,6 +217,7 @@ public class OrderService {
                 .status(OrderStatus.PENDING)
                 .totalAmount(BigDecimal.ZERO)
                 .discountAmount(BigDecimal.ZERO)
+                .taxAmount(BigDecimal.ZERO)
                 .shippingFullName(address.getFullName())
                 .shippingPhone(address.getPhone())
                 .shippingLine1(address.getLine1())
@@ -212,10 +270,13 @@ public class OrderService {
         return OrderResponse.builder()
                 .id(order.getId())
                 .status(order.getStatus().name())
-                .subtotal(order.getTotalAmount().add(order.getDiscountAmount()))
+                .subtotal(order.getTotalAmount().subtract(order.getTaxAmount()).add(order.getDiscountAmount()))
                 .couponCode(order.getCouponCode())
                 .discountAmount(order.getDiscountAmount())
+                .taxAmount(order.getTaxAmount())
                 .totalAmount(order.getTotalAmount())
+                .trackingNumber(order.getTrackingNumber())
+                .carrier(order.getCarrier())
                 .shippingAddress(address)
                 .items(items)
                 .createdAt(order.getCreatedAt())
