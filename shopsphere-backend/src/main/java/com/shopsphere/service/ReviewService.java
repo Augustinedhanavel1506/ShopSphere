@@ -9,11 +9,13 @@ import org.springframework.stereotype.Service;
 import com.shopsphere.dto.ReviewListResponse;
 import com.shopsphere.dto.ReviewRequest;
 import com.shopsphere.dto.ReviewResponse;
+import com.shopsphere.entity.OrderStatus;
 import com.shopsphere.entity.Product;
 import com.shopsphere.entity.Review;
 import com.shopsphere.entity.User;
 import com.shopsphere.exception.DuplicateResourceException;
 import com.shopsphere.exception.ResourceNotFoundException;
+import com.shopsphere.repository.OrderRepository;
 import com.shopsphere.repository.ProductRepository;
 import com.shopsphere.repository.ReviewRepository;
 import com.shopsphere.repository.UserRepository;
@@ -27,6 +29,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
 
     public ReviewListResponse getForProduct(Long productId) {
         List<Review> reviews = reviewRepository.findByProductId(productId);
@@ -49,6 +52,12 @@ public class ReviewService {
 
         if (reviewRepository.existsByProductIdAndUserId(productId, user.getId())) {
             throw new DuplicateResourceException("You have already reviewed this product; use PUT to update it");
+        }
+
+        boolean hasPurchased = orderRepository.existsByUserIdAndStatusNotAndItems_Product_Id(
+                user.getId(), OrderStatus.CANCELLED, productId);
+        if (!hasPurchased) {
+            throw new AccessDeniedException("You can only review products you have purchased");
         }
 
         Review review = Review.builder()
