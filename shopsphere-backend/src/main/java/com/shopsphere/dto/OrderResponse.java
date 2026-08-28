@@ -1,0 +1,23 @@
+package com.shopsphere.dto;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
+@Builder
+@AllArgsConstructor
+public class OrderResponse {
+
+    private Long id;
+    private String status;
+    private BigDecimal totalAmount;
+    private ShippingAddressResponse shippingAddress;
+    private List<OrderItemResponse> items;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+}
