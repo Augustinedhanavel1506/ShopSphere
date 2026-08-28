@@ -90,8 +90,9 @@ public class OrderService {
         Order order = findOrderOrThrow(orderId);
         requireOwnerOrAdmin(order, email, isAdmin, "cancel");
 
-        if (order.getStatus() == OrderStatus.CANCELLED) {
-            throw new InvalidOrderStateException("Order is already cancelled");
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new InvalidOrderStateException(
+                    "Only pending orders can be cancelled; this order is " + order.getStatus());
         }
 
         order.setStatus(OrderStatus.CANCELLED);
