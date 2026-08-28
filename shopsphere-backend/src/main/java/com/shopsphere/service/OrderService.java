@@ -3,6 +3,8 @@ package com.shopsphere.service;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,6 +91,13 @@ public class OrderService {
     public List<OrderResponse> getMyOrders(String email) {
         User user = findUserOrThrow(email);
         return orderRepository.findByUserIdOrderByCreatedAtDesc(user.getId()).stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public List<OrderResponse> getRecentOrders(int limit) {
+        return orderRepository.findAll(PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdAt")))
+                .stream()
                 .map(this::toResponse)
                 .toList();
     }
