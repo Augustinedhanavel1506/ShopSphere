@@ -2,6 +2,7 @@ package com.shopsphere.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
@@ -25,6 +26,7 @@ import com.shopsphere.entity.Address;
 import com.shopsphere.entity.Cart;
 import com.shopsphere.entity.CartItem;
 import com.shopsphere.entity.Coupon;
+import com.shopsphere.entity.InventoryTransactionReason;
 import com.shopsphere.entity.Order;
 import com.shopsphere.entity.OrderItem;
 import com.shopsphere.entity.OrderStatus;
@@ -81,7 +83,7 @@ public class OrderService {
         for (CartItem cartItem : activeItems) {
             Product product = cartItem.getProduct();
 
-            inventoryService.adjustQuantity(product.getId(), -cartItem.getQuantity());
+            inventoryService.adjustQuantity(product.getId(), -cartItem.getQuantity(), InventoryTransactionReason.ORDER_PLACED);
 
             order.getItems().add(OrderItem.builder()
                     .order(order)
@@ -132,6 +134,12 @@ public class OrderService {
                 .toList();
     }
 
+    public List<OrderResponse> getRecentOrders(int limit, LocalDateTime from, LocalDateTime to) {
+        return orderRepository.findByCreatedAtBetweenOrderByCreatedAtDesc(from, to, PageRequest.of(0, limit)).stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     public OrderResponse getById(String email, boolean isAdmin, Long orderId) {
         Order order = findOrderOrThrow(orderId);
         requireOwnerOrAdmin(order, email, isAdmin, "view");
@@ -150,7 +158,7 @@ public class OrderService {
 
         order.setStatus(OrderStatus.CANCELLED);
         for (OrderItem item : order.getItems()) {
-            inventoryService.adjustQuantity(item.getProduct().getId(), item.getQuantity());
+            inventoryService.adjustQuantity(item.getProduct().getId(), item.getQuantity(), InventoryTransactionReason.ORDER_CANCELLED);
         }
 
         Order saved = orderRepository.save(order);
@@ -172,7 +180,7 @@ public class OrderService {
 
         if (target == OrderStatus.CANCELLED) {
             for (OrderItem item : order.getItems()) {
-                inventoryService.adjustQuantity(item.getProduct().getId(), item.getQuantity());
+                inventoryService.adjustQuantity(item.getProduct().getId(), item.getQuantity(), InventoryTransactionReason.ORDER_CANCELLED);
             }
         }
 
