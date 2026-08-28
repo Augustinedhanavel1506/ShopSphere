@@ -25,6 +25,7 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public PaymentResponse pay(String email, Long orderId, PaymentRequest request) {
@@ -50,6 +51,8 @@ public class PaymentService {
 
         order.setStatus(OrderStatus.PAID);
         orderRepository.save(order);
+
+        notificationService.sendPaymentConfirmationEmail(order.getUser().getEmail(), order.getId(), saved.getAmount());
 
         return toResponse(saved);
     }

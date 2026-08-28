@@ -37,6 +37,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final InventoryService inventoryService;
     private final CouponService couponService;
+    private final NotificationService notificationService;
 
     @Transactional
     public OrderResponse checkout(String email, CheckoutRequest request) {
@@ -80,6 +81,8 @@ public class OrderService {
         cart.getItems().clear();
         cartRepository.save(cart);
 
+        notificationService.sendOrderConfirmationEmail(user.getEmail(), saved.getId(), saved.getTotalAmount());
+
         return toResponse(saved);
     }
 
@@ -111,7 +114,10 @@ public class OrderService {
             inventoryService.adjustQuantity(item.getProduct().getId(), item.getQuantity());
         }
 
-        return toResponse(orderRepository.save(order));
+        Order saved = orderRepository.save(order);
+        notificationService.sendOrderCancelledEmail(order.getUser().getEmail(), saved.getId());
+
+        return toResponse(saved);
     }
 
     private Order buildOrderShell(User user, ShippingAddressRequest address) {

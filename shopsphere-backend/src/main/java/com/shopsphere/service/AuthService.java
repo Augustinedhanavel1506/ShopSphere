@@ -32,6 +32,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final NotificationService notificationService;
 
     public UserResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -51,6 +52,7 @@ public class AuthService {
                 .build();
 
         User saved = userRepository.save(user);
+        notificationService.sendRegistrationEmail(saved.getEmail(), saved.getFirstName());
         return toResponse(saved);
     }
 
