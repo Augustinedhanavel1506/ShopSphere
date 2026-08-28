@@ -12,4 +12,6 @@ public class CheckoutRequest {
     @NotNull(message = "Shipping address is required")
     @Valid
     private ShippingAddressRequest shippingAddress;
+
+    private String couponCode;
 }

@@ -14,6 +14,7 @@ import com.shopsphere.dto.ShippingAddressRequest;
 import com.shopsphere.dto.ShippingAddressResponse;
 import com.shopsphere.entity.Cart;
 import com.shopsphere.entity.CartItem;
+import com.shopsphere.entity.Coupon;
 import com.shopsphere.entity.Order;
 import com.shopsphere.entity.OrderItem;
 import com.shopsphere.entity.OrderStatus;
@@ -35,6 +36,7 @@ public class OrderService {
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
     private final InventoryService inventoryService;
+    private final CouponService couponService;
 
     @Transactional
     public OrderResponse checkout(String email, CheckoutRequest request) {
@@ -63,7 +65,16 @@ public class OrderService {
             total = total.add(product.getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity())));
         }
 
-        order.setTotalAmount(total);
+        BigDecimal discount = BigDecimal.ZERO;
+        if (request.getCouponCode() != null && !request.getCouponCode().isBlank()) {
+            Coupon coupon = couponService.validate(request.getCouponCode(), total);
+            discount = couponService.calculateDiscount(coupon, total);
+            couponService.recordRedemption(coupon);
+            order.setCouponCode(coupon.getCode());
+        }
+
+        order.setDiscountAmount(discount);
+        order.setTotalAmount(total.subtract(discount));
         Order saved = orderRepository.save(order);
 
         cart.getItems().clear();
@@ -108,6 +119,7 @@ public class OrderService {
                 .user(user)
                 .status(OrderStatus.PENDING)
                 .totalAmount(BigDecimal.ZERO)
+                .discountAmount(BigDecimal.ZERO)
                 .shippingFullName(address.getFullName())
                 .shippingPhone(address.getPhone())
                 .shippingLine1(address.getLine1())
@@ -160,6 +172,9 @@ public class OrderService {
         return OrderResponse.builder()
                 .id(order.getId())
                 .status(order.getStatus().name())
+                .subtotal(order.getTotalAmount().add(order.getDiscountAmount()))
+                .couponCode(order.getCouponCode())
+                .discountAmount(order.getDiscountAmount())
                 .totalAmount(order.getTotalAmount())
                 .shippingAddress(address)
                 .items(items)
