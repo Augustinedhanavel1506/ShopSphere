@@ -14,6 +14,7 @@ import com.shopsphere.dto.OrderItemResponse;
 import com.shopsphere.dto.OrderResponse;
 import com.shopsphere.dto.ShippingAddressRequest;
 import com.shopsphere.dto.ShippingAddressResponse;
+import com.shopsphere.entity.Address;
 import com.shopsphere.entity.Cart;
 import com.shopsphere.entity.CartItem;
 import com.shopsphere.entity.Coupon;
@@ -40,6 +41,7 @@ public class OrderService {
     private final InventoryService inventoryService;
     private final CouponService couponService;
     private final NotificationService notificationService;
+    private final AddressService addressService;
 
     @Transactional
     public OrderResponse checkout(String email, CheckoutRequest request) {
@@ -49,7 +51,8 @@ public class OrderService {
                 .filter(c -> !c.getItems().isEmpty())
                 .orElseThrow(() -> new InvalidOrderStateException("Your cart is empty"));
 
-        Order order = buildOrderShell(user, request.getShippingAddress());
+        ShippingAddressRequest shippingAddress = resolveShippingAddress(email, request);
+        Order order = buildOrderShell(user, shippingAddress);
         BigDecimal total = BigDecimal.ZERO;
 
         for (CartItem cartItem : cart.getItems()) {
@@ -127,6 +130,28 @@ public class OrderService {
         notificationService.sendOrderCancelledEmail(order.getUser().getEmail(), saved.getId());
 
         return toResponse(saved);
+    }
+
+    private ShippingAddressRequest resolveShippingAddress(String email, CheckoutRequest request) {
+        if (request.getAddressId() != null) {
+            Address address = addressService.findOwnedOrThrow(email, request.getAddressId());
+            ShippingAddressRequest resolved = new ShippingAddressRequest();
+            resolved.setFullName(address.getFullName());
+            resolved.setPhone(address.getPhone());
+            resolved.setLine1(address.getLine1());
+            resolved.setLine2(address.getLine2());
+            resolved.setCity(address.getCity());
+            resolved.setState(address.getState());
+            resolved.setPostalCode(address.getPostalCode());
+            resolved.setCountry(address.getCountry());
+            return resolved;
+        }
+
+        if (request.getShippingAddress() != null) {
+            return request.getShippingAddress();
+        }
+
+        throw new InvalidOrderStateException("Either addressId or shippingAddress must be provided");
     }
 
     private Order buildOrderShell(User user, ShippingAddressRequest address) {

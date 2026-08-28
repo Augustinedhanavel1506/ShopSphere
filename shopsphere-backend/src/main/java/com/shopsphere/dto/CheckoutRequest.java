@@ -1,7 +1,6 @@
 package com.shopsphere.dto;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +8,9 @@ import lombok.Setter;
 @Setter
 public class CheckoutRequest {
 
-    @NotNull(message = "Shipping address is required")
+    /** Either addressId (a saved address) or shippingAddress (inline) must be provided. */
+    private Long addressId;
+
     @Valid
     private ShippingAddressRequest shippingAddress;
 
