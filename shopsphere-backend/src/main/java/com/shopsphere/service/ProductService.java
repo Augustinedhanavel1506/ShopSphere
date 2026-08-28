@@ -25,6 +25,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final InventoryService inventoryService;
 
     public List<ProductResponse> getAll(Long categoryId) {
         List<Product> products = categoryId != null
@@ -55,7 +56,10 @@ public class ProductService {
 
         applyImages(product, request.getImages());
 
-        return toResponse(productRepository.save(product));
+        Product saved = productRepository.save(product);
+        inventoryService.initializeForProduct(saved);
+
+        return toResponse(saved);
     }
 
     public ProductResponse update(Long id, ProductRequest request) {
