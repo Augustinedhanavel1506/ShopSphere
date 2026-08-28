@@ -15,4 +15,8 @@ public class CategoryRequest {
 
     @Size(max = 500, message = "Description must be at most 500 characters")
     private String description;
+
+    private String imageUrl;
+
+    private Boolean active = true;
 }

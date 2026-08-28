@@ -43,6 +43,7 @@ public class CouponService {
                 .discountValue(request.getDiscountValue())
                 .minOrderAmount(request.getMinOrderAmount() == null ? BigDecimal.ZERO : request.getMinOrderAmount())
                 .maxUses(request.getMaxUses())
+                .maxDiscountAmount(request.getMaxDiscountAmount())
                 .usedCount(0)
                 .expiresAt(request.getExpiresAt())
                 .active(request.getActive() == null || request.getActive())
@@ -65,6 +66,7 @@ public class CouponService {
         coupon.setDiscountValue(request.getDiscountValue());
         coupon.setMinOrderAmount(request.getMinOrderAmount() == null ? BigDecimal.ZERO : request.getMinOrderAmount());
         coupon.setMaxUses(request.getMaxUses());
+        coupon.setMaxDiscountAmount(request.getMaxDiscountAmount());
         coupon.setExpiresAt(request.getExpiresAt());
         coupon.setActive(request.getActive() == null || request.getActive());
 
@@ -113,6 +115,10 @@ public class CouponService {
                 ? orderTotal.multiply(coupon.getDiscountValue()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)
                 : coupon.getDiscountValue();
 
+        if (coupon.getMaxDiscountAmount() != null) {
+            discount = discount.min(coupon.getMaxDiscountAmount());
+        }
+
         return discount.min(orderTotal);
     }
 
@@ -144,6 +150,7 @@ public class CouponService {
                 .discountValue(coupon.getDiscountValue())
                 .minOrderAmount(coupon.getMinOrderAmount())
                 .maxUses(coupon.getMaxUses())
+                .maxDiscountAmount(coupon.getMaxDiscountAmount())
                 .usedCount(coupon.getUsedCount())
                 .expiresAt(coupon.getExpiresAt())
                 .active(coupon.getActive())

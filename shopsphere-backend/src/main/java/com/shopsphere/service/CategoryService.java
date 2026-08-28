@@ -19,10 +19,9 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public List<CategoryResponse> getAll() {
-        return categoryRepository.findAll().stream()
-                .map(this::toResponse)
-                .toList();
+    public List<CategoryResponse> getAll(boolean includeInactive) {
+        List<Category> categories = includeInactive ? categoryRepository.findAll() : categoryRepository.findByActiveTrue();
+        return categories.stream().map(this::toResponse).toList();
     }
 
     public CategoryResponse getById(Long id) {
@@ -37,6 +36,8 @@ public class CategoryService {
         Category category = Category.builder()
                 .name(request.getName())
                 .description(request.getDescription())
+                .imageUrl(request.getImageUrl())
+                .active(request.getActive() == null || request.getActive())
                 .build();
 
         return toResponse(categoryRepository.save(category));
@@ -51,6 +52,8 @@ public class CategoryService {
 
         category.setName(request.getName());
         category.setDescription(request.getDescription());
+        category.setImageUrl(request.getImageUrl());
+        category.setActive(request.getActive() == null || request.getActive());
 
         return toResponse(categoryRepository.save(category));
     }
@@ -70,6 +73,8 @@ public class CategoryService {
                 .id(category.getId())
                 .name(category.getName())
                 .description(category.getDescription())
+                .imageUrl(category.getImageUrl())
+                .active(category.getActive())
                 .createdAt(category.getCreatedAt())
                 .updatedAt(category.getUpdatedAt())
                 .build();

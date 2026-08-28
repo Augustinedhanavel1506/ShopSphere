@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,8 +30,10 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public List<CategoryResponse> getAll() {
-        return categoryService.getAll();
+    public List<CategoryResponse> getAll(Authentication authentication) {
+        boolean isAdmin = authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+        return categoryService.getAll(isAdmin);
     }
 
     @GetMapping("/{id}")

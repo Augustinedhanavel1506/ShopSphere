@@ -54,6 +54,9 @@ public class Product {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
+    @Column(name = "original_price", precision = 10, scale = 2)
+    private BigDecimal originalPrice;
+
     @Column(nullable = false, unique = true, length = 50)
     private String sku;
 
@@ -72,4 +75,8 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("displayOrder ASC")
     private List<ProductImage> images = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductSpecification> specifications = new ArrayList<>();
 }

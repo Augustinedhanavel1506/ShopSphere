@@ -51,6 +51,9 @@ public class Coupon {
     @Column(name = "max_uses")
     private Integer maxUses;
 
+    @Column(name = "max_discount_amount", precision = 10, scale = 2)
+    private BigDecimal maxDiscountAmount;
+
     @Column(name = "used_count", nullable = false)
     private Integer usedCount;
 

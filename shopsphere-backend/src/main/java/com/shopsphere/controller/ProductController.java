@@ -39,6 +39,11 @@ public class ProductController {
         return productService.getById(id);
     }
 
+    @GetMapping("/search")
+    public List<ProductResponse> search(@RequestParam String q) {
+        return productService.search(q);
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request) {

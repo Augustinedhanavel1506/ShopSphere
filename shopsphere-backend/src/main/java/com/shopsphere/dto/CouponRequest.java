@@ -32,6 +32,9 @@ public class CouponRequest {
     @Min(value = 1, message = "Max uses must be at least 1")
     private Integer maxUses;
 
+    @DecimalMin(value = "0.01", message = "Max discount amount must be positive")
+    private BigDecimal maxDiscountAmount;
+
     private LocalDateTime expiresAt;
 
     private Boolean active = true;

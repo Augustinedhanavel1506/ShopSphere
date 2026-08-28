@@ -38,6 +38,12 @@ public class Category {
     @Column(length = 500)
     private String description;
 
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
+
+    @Column(nullable = false)
+    private Boolean active;
+
     @Generated(event = EventType.INSERT)
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;

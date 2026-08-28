@@ -28,6 +28,9 @@ public class ProductRequest {
     @DecimalMin(value = "0.0", inclusive = true, message = "Price must not be negative")
     private BigDecimal price;
 
+    @DecimalMin(value = "0.0", inclusive = true, message = "Original price must not be negative")
+    private BigDecimal originalPrice;
+
     @NotBlank(message = "SKU is required")
     @Size(max = 50, message = "SKU must be at most 50 characters")
     private String sku;
@@ -36,4 +39,7 @@ public class ProductRequest {
 
     @Valid
     private List<ProductImageRequest> images;
+
+    @Valid
+    private List<ProductSpecificationRequest> specifications;
 }

@@ -1,5 +1,7 @@
 package com.shopsphere.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,9 +11,12 @@ import com.shopsphere.dto.ProductImageRequest;
 import com.shopsphere.dto.ProductImageResponse;
 import com.shopsphere.dto.ProductRequest;
 import com.shopsphere.dto.ProductResponse;
+import com.shopsphere.dto.ProductSpecificationRequest;
+import com.shopsphere.dto.ProductSpecificationResponse;
 import com.shopsphere.entity.Category;
 import com.shopsphere.entity.Product;
 import com.shopsphere.entity.ProductImage;
+import com.shopsphere.entity.ProductSpecification;
 import com.shopsphere.exception.DuplicateResourceException;
 import com.shopsphere.exception.ResourceNotFoundException;
 import com.shopsphere.repository.CategoryRepository;
@@ -34,6 +39,13 @@ public class ProductService {
         return products.stream().map(this::toResponse).toList();
     }
 
+    public List<ProductResponse> search(String query) {
+        return productRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     public ProductResponse getById(Long id) {
         return toResponse(findOrThrow(id));
     }
@@ -50,11 +62,13 @@ public class ProductService {
                 .name(request.getName())
                 .description(request.getDescription())
                 .price(request.getPrice())
+                .originalPrice(request.getOriginalPrice())
                 .sku(request.getSku())
                 .active(Optional.ofNullable(request.getActive()).orElse(true))
                 .build();
 
         applyImages(product, request.getImages());
+        applySpecifications(product, request.getSpecifications());
 
         Product saved = productRepository.save(product);
         inventoryService.initializeForProduct(saved);
@@ -75,11 +89,15 @@ public class ProductService {
         product.setName(request.getName());
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
+        product.setOriginalPrice(request.getOriginalPrice());
         product.setSku(request.getSku());
         product.setActive(Optional.ofNullable(request.getActive()).orElse(true));
 
         product.getImages().clear();
         applyImages(product, request.getImages());
+
+        product.getSpecifications().clear();
+        applySpecifications(product, request.getSpecifications());
 
         return toResponse(productRepository.save(product));
     }
@@ -98,6 +116,18 @@ public class ProductService {
                         .product(product)
                         .imageUrl(imageRequest.getImageUrl())
                         .displayOrder(Optional.ofNullable(imageRequest.getDisplayOrder()).orElse(0))
+                        .build()));
+    }
+
+    private void applySpecifications(Product product, List<ProductSpecificationRequest> specRequests) {
+        if (specRequests == null) {
+            return;
+        }
+        specRequests.forEach(specRequest -> product.getSpecifications().add(
+                ProductSpecification.builder()
+                        .product(product)
+                        .specKey(specRequest.getKey())
+                        .specValue(specRequest.getValue())
                         .build()));
     }
 
@@ -120,6 +150,22 @@ public class ProductService {
                         .build())
                 .toList();
 
+        List<ProductSpecificationResponse> specifications = product.getSpecifications().stream()
+                .map(spec -> ProductSpecificationResponse.builder()
+                        .id(spec.getId())
+                        .key(spec.getSpecKey())
+                        .value(spec.getSpecValue())
+                        .build())
+                .toList();
+
+        Integer discountPercentage = null;
+        if (product.getOriginalPrice() != null && product.getOriginalPrice().compareTo(product.getPrice()) > 0) {
+            discountPercentage = product.getOriginalPrice().subtract(product.getPrice())
+                    .multiply(BigDecimal.valueOf(100))
+                    .divide(product.getOriginalPrice(), 0, RoundingMode.HALF_UP)
+                    .intValue();
+        }
+
         return ProductResponse.builder()
                 .id(product.getId())
                 .categoryId(product.getCategory().getId())
@@ -127,9 +173,12 @@ public class ProductService {
                 .name(product.getName())
                 .description(product.getDescription())
                 .price(product.getPrice())
+                .originalPrice(product.getOriginalPrice())
+                .discountPercentage(discountPercentage)
                 .sku(product.getSku())
                 .active(product.getActive())
                 .images(images)
+                .specifications(specifications)
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
                 .build();
