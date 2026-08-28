@@ -138,13 +138,16 @@ public class AuthService {
         User user = userRepository.findByVerificationToken(token)
                 .orElseThrow(() -> new InvalidTokenException("Invalid verification token"));
 
+        // Idempotent: verifying an already-verified account (e.g. a duplicated request) is a harmless no-op.
+        if (Boolean.TRUE.equals(user.getEmailVerified())) {
+            return;
+        }
+
         if (user.getVerificationTokenExpiry() == null || user.getVerificationTokenExpiry().isBefore(LocalDateTime.now())) {
             throw new InvalidTokenException("Verification token has expired; request a new one");
         }
 
         user.setEmailVerified(true);
-        user.setVerificationToken(null);
-        user.setVerificationTokenExpiry(null);
         userRepository.save(user);
     }
 
