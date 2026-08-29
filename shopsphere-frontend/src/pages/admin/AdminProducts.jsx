@@ -8,6 +8,7 @@ import Button from '../../components/Button'
 import Input from '../../components/Input'
 import Badge from '../../components/Badge'
 import Modal from '../../components/Modal'
+import ImageUploadField from '../../components/ImageUploadField'
 
 const EMPTY_FORM = {
   categoryId: '',
@@ -228,14 +229,11 @@ export default function AdminProducts() {
               </div>
               <div className="flex flex-col gap-2">
                 {form.images.map((img, i) => (
-                  <div key={i} className="flex gap-2">
-                    <input
-                      value={img.imageUrl}
-                      onChange={(e) => updateImage(i, e.target.value)}
-                      placeholder="Image URL"
-                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    />
-                    <button type="button" onClick={() => removeImage(i)} className="px-2 text-red-600">
+                  <div key={i} className="flex items-start gap-2">
+                    <div className="w-full">
+                      <ImageUploadField value={img.imageUrl} onChange={(url) => updateImage(i, url)} />
+                    </div>
+                    <button type="button" onClick={() => removeImage(i)} className="mt-2 px-2 text-red-600">
                       ✕
                     </button>
                   </div>

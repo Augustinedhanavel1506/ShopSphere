@@ -7,6 +7,7 @@ import Button from '../../components/Button'
 import Input from '../../components/Input'
 import Badge from '../../components/Badge'
 import Modal from '../../components/Modal'
+import ImageUploadField from '../../components/ImageUploadField'
 
 const EMPTY_FORM = { name: '', description: '', imageUrl: '', active: true }
 
@@ -126,11 +127,10 @@ export default function AdminCategories() {
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
             />
-            <Input
-              label="Image URL"
-              value={form.imageUrl}
-              onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-            />
+            <label className="block text-left">
+              <span className="mb-1.5 block text-sm font-medium text-ink">Image</span>
+              <ImageUploadField value={form.imageUrl} onChange={(url) => setForm({ ...form, imageUrl: url })} />
+            </label>
             <label className="flex items-center gap-2 text-sm text-ink">
               <input
                 type="checkbox"
