@@ -36,4 +36,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("status") OrderStatus status, @Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
 
     List<Order> findByCreatedAtBetweenOrderByCreatedAtDesc(LocalDateTime from, LocalDateTime to, Pageable pageable);
+
+    @Query(value = "SELECT DATE(created_at) AS day, "
+            + "SUM(CASE WHEN status <> 'CANCELLED' THEN total_amount ELSE 0 END) AS revenue, "
+            + "COUNT(*) AS order_count "
+            + "FROM orders WHERE created_at BETWEEN :from AND :to "
+            + "GROUP BY DATE(created_at) ORDER BY day", nativeQuery = true)
+    List<Object[]> findRevenueTrend(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
 }

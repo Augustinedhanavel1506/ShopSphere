@@ -1,13 +1,17 @@
 package com.shopsphere.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
 import com.shopsphere.dto.DashboardSummaryResponse;
 import com.shopsphere.dto.LowStockProductResponse;
+import com.shopsphere.dto.RevenueTrendPointResponse;
 import com.shopsphere.entity.OrderStatus;
 import com.shopsphere.repository.InventoryRepository;
 import com.shopsphere.repository.OrderRepository;
@@ -38,6 +42,23 @@ public class AdminDashboardService {
                 userRepository.countByRoles_Name(CUSTOMER_ROLE),
                 productRepository.count(),
                 inventoryRepository.findByQuantityLessThanEqual(lowStockThreshold).size());
+    }
+
+    public Map<String, Long> getOrdersByStatus(LocalDateTime from, LocalDateTime to) {
+        Map<String, Long> result = new LinkedHashMap<>();
+        for (OrderStatus status : OrderStatus.values()) {
+            result.put(status.name(), orderRepository.countByStatusAndCreatedAtBetween(status, from, to));
+        }
+        return result;
+    }
+
+    public List<RevenueTrendPointResponse> getRevenueTrend(LocalDateTime from, LocalDateTime to) {
+        return orderRepository.findRevenueTrend(from, to).stream()
+                .map(row -> new RevenueTrendPointResponse(
+                        row[0].toString(),
+                        row[1] == null ? BigDecimal.ZERO : new BigDecimal(row[1].toString()),
+                        ((Number) row[2]).longValue()))
+                .toList();
     }
 
     public List<LowStockProductResponse> getLowStockProducts(int threshold) {

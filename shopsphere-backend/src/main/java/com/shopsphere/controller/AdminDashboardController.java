@@ -2,6 +2,7 @@ package com.shopsphere.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.shopsphere.dto.DashboardSummaryResponse;
 import com.shopsphere.dto.LowStockProductResponse;
 import com.shopsphere.dto.OrderResponse;
+import com.shopsphere.dto.RevenueTrendPointResponse;
 import com.shopsphere.service.AdminDashboardService;
 import com.shopsphere.service.OrderService;
 
@@ -40,6 +42,24 @@ public class AdminDashboardController {
     @GetMapping("/low-stock")
     public List<LowStockProductResponse> getLowStockProducts(@RequestParam(defaultValue = "5") int threshold) {
         return adminDashboardService.getLowStockProducts(threshold);
+    }
+
+    @GetMapping("/orders-by-status")
+    public Map<String, Long> getOrdersByStatus(
+            @RequestParam(required = false) String period,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
+        LocalDateTime[] range = adminDashboardService.resolveRange(period, from, to);
+        return adminDashboardService.getOrdersByStatus(range[0], range[1]);
+    }
+
+    @GetMapping("/revenue-trend")
+    public List<RevenueTrendPointResponse> getRevenueTrend(
+            @RequestParam(required = false) String period,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
+        LocalDateTime[] range = adminDashboardService.resolveRange(period, from, to);
+        return adminDashboardService.getRevenueTrend(range[0], range[1]);
     }
 
     @GetMapping("/recent-orders")
