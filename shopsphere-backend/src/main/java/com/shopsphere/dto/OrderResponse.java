@@ -14,6 +14,7 @@ import lombok.Getter;
 public class OrderResponse {
 
     private Long id;
+    private String customerEmail;
     private String status;
     private BigDecimal subtotal;
     private String couponCode;

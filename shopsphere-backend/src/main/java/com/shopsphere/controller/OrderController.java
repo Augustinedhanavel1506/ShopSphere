@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shopsphere.dto.CheckoutRequest;
 import com.shopsphere.dto.OrderResponse;
 import com.shopsphere.dto.OrderStatusUpdateRequest;
+import com.shopsphere.entity.OrderStatus;
 import com.shopsphere.service.OrderService;
 
 import jakarta.validation.Valid;
@@ -38,6 +40,12 @@ public class OrderController {
     @GetMapping
     public List<OrderResponse> getMyOrders(Authentication authentication) {
         return orderService.getMyOrders(authentication.getName());
+    }
+
+    @GetMapping("/admin/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<OrderResponse> getAllOrders(@RequestParam(required = false) OrderStatus status) {
+        return orderService.getAllOrders(status);
     }
 
     @GetMapping("/{id}")

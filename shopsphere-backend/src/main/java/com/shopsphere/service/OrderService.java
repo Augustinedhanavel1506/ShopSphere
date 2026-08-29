@@ -127,6 +127,13 @@ public class OrderService {
                 .toList();
     }
 
+    public List<OrderResponse> getAllOrders(OrderStatus status) {
+        List<Order> orders = status != null
+                ? orderRepository.findByStatusOrderByCreatedAtDesc(status)
+                : orderRepository.findAllByOrderByCreatedAtDesc();
+        return orders.stream().map(this::toResponse).toList();
+    }
+
     public List<OrderResponse> getRecentOrders(int limit) {
         return orderRepository.findAll(PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdAt")))
                 .stream()
@@ -277,6 +284,7 @@ public class OrderService {
 
         return OrderResponse.builder()
                 .id(order.getId())
+                .customerEmail(order.getUser().getEmail())
                 .status(order.getStatus().name())
                 .subtotal(order.getTotalAmount().subtract(order.getTaxAmount()).add(order.getDiscountAmount()))
                 .couponCode(order.getCouponCode())
