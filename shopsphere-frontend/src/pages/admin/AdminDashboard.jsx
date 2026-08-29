@@ -1,6 +1,24 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getDashboardSummary, getRecentOrders, getLowStockProducts } from '../../services/dashboard'
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from 'recharts'
+import {
+  getDashboardSummary,
+  getRecentOrders,
+  getLowStockProducts,
+  getOrdersByStatus,
+  getRevenueTrend,
+} from '../../services/dashboard'
 import { extractErrorMessage } from '../../services/errorUtils'
 import Card from '../../components/Card'
 import OrderStatusBadge from '../../components/OrderStatusBadge'
@@ -12,6 +30,16 @@ const PERIODS = [
   { value: 'year', label: '1 Year' },
   { value: '', label: 'All Time' },
 ]
+
+const STATUS_COLORS = {
+  PENDING: '#f59e0b',
+  PAID: '#6366f1',
+  CONFIRMED: '#3b82f6',
+  PROCESSING: '#8b5cf6',
+  SHIPPED: '#06b6d4',
+  DELIVERED: '#10b981',
+  CANCELLED: '#ef4444',
+}
 
 function StatCard({ label, value }) {
   return (
@@ -30,6 +58,8 @@ export default function AdminDashboard() {
   const [summary, setSummary] = useState(null)
   const [recentOrders, setRecentOrders] = useState([])
   const [lowStock, setLowStock] = useState([])
+  const [ordersByStatus, setOrdersByStatus] = useState(null)
+  const [revenueTrend, setRevenueTrend] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -43,11 +73,15 @@ export default function AdminDashboard() {
       getDashboardSummary(rangeParams),
       getRecentOrders({ limit: 8, ...rangeParams }),
       getLowStockProducts(5),
+      getOrdersByStatus(rangeParams),
+      getRevenueTrend(rangeParams),
     ])
-      .then(([summaryData, orders, lowStockProducts]) => {
+      .then(([summaryData, orders, lowStockProducts, statusCounts, trend]) => {
         setSummary(summaryData)
         setRecentOrders(orders)
         setLowStock(lowStockProducts)
+        setOrdersByStatus(statusCounts)
+        setRevenueTrend(trend)
       })
       .catch((err) => setError(extractErrorMessage(err)))
       .finally(() => setLoading(false))
@@ -132,6 +166,71 @@ export default function AdminDashboard() {
               <StatCard label="Customers" value={summary.totalCustomers} />
               <StatCard label="Products" value={summary.totalProducts} />
               <StatCard label="Low Stock" value={summary.lowStockProductCount} />
+            </div>
+
+            <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr]">
+              <Card>
+                <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted">Revenue Trend</h2>
+                {revenueTrend.length === 0 ? (
+                  <p className="text-sm text-muted">No orders in this period.</p>
+                ) : (
+                  <ResponsiveContainer width="100%" height={220}>
+                    <AreaChart data={revenueTrend} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="revenueFill" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.35} />
+                          <stop offset="95%" stopColor="#4f46e5" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                      <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#64748b' }} tickLine={false} axisLine={false} />
+                      <YAxis
+                        tick={{ fontSize: 11, fill: '#64748b' }}
+                        tickLine={false}
+                        axisLine={false}
+                        tickFormatter={(v) => `$${v}`}
+                      />
+                      <Tooltip
+                        formatter={(value, name) => [name === 'revenue' ? `$${Number(value).toFixed(2)}` : value, name === 'revenue' ? 'Revenue' : 'Orders']}
+                      />
+                      <Area type="monotone" dataKey="revenue" stroke="#4f46e5" strokeWidth={2} fill="url(#revenueFill)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                )}
+              </Card>
+
+              <Card>
+                <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted">Orders by Status</h2>
+                {!ordersByStatus || Object.values(ordersByStatus).every((v) => v === 0) ? (
+                  <p className="text-sm text-muted">No orders in this period.</p>
+                ) : (
+                  <ResponsiveContainer width="100%" height={220}>
+                    <BarChart
+                      data={Object.entries(ordersByStatus).map(([status, count]) => ({ status, count }))}
+                      margin={{ top: 5, right: 10, left: 0, bottom: 0 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                      <XAxis
+                        dataKey="status"
+                        tick={{ fontSize: 10, fill: '#64748b' }}
+                        tickLine={false}
+                        axisLine={false}
+                        interval={0}
+                        angle={-25}
+                        textAnchor="end"
+                        height={50}
+                      />
+                      <YAxis tick={{ fontSize: 11, fill: '#64748b' }} tickLine={false} axisLine={false} allowDecimals={false} />
+                      <Tooltip />
+                      <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+                        {Object.keys(ordersByStatus).map((status) => (
+                          <Cell key={status} fill={STATUS_COLORS[status] ?? '#94a3b8'} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                )}
+              </Card>
             </div>
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
