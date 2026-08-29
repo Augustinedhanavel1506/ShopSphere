@@ -27,3 +27,11 @@ export function getPayment(id) {
 export function validateCoupon(code, orderTotal) {
   return api.get('/api/coupons/validate', { params: { code, orderTotal } }).then((res) => res.data)
 }
+
+export function getAllOrdersAdmin(status) {
+  return api.get('/api/orders/admin/all', { params: status ? { status } : {} }).then((res) => res.data)
+}
+
+export function updateOrderStatus(id, payload) {
+  return api.put(`/api/orders/${id}/status`, payload).then((res) => res.data)
+}

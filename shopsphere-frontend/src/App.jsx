@@ -1,8 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { ToastProvider } from './context/ToastContext'
-import { ProtectedRoute } from './components/ProtectedRoute'
+import { ProtectedRoute, AdminRoute } from './components/ProtectedRoute'
 import Navbar from './components/Navbar'
+import AdminLayout from './components/AdminLayout'
 import Home from './pages/Home'
 import Products from './pages/Products'
 import ProductDetail from './pages/ProductDetail'
@@ -18,6 +19,13 @@ import Addresses from './pages/Addresses'
 import Checkout from './pages/Checkout'
 import Orders from './pages/Orders'
 import OrderDetail from './pages/OrderDetail'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import AdminCategories from './pages/admin/AdminCategories'
+import AdminProducts from './pages/admin/AdminProducts'
+import AdminInventory from './pages/admin/AdminInventory'
+import AdminOrders from './pages/admin/AdminOrders'
+import AdminOrderDetail from './pages/admin/AdminOrderDetail'
+import AdminCoupons from './pages/admin/AdminCoupons'
 
 function Layout({ children }) {
   return (
@@ -52,6 +60,18 @@ export default function App() {
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/orders" element={<Orders />} />
                 <Route path="/orders/:id" element={<OrderDetail />} />
+              </Route>
+
+              <Route element={<AdminRoute />}>
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="categories" element={<AdminCategories />} />
+                  <Route path="products" element={<AdminProducts />} />
+                  <Route path="inventory" element={<AdminInventory />} />
+                  <Route path="orders" element={<AdminOrders />} />
+                  <Route path="orders/:id" element={<AdminOrderDetail />} />
+                  <Route path="coupons" element={<AdminCoupons />} />
+                </Route>
               </Route>
             </Routes>
           </Layout>
