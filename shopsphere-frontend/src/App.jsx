@@ -12,21 +12,18 @@ import VerifyEmail from './pages/VerifyEmail'
 import ResendVerification from './pages/ResendVerification'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
+import Cart from './pages/Cart'
+import Wishlist from './pages/Wishlist'
+import Addresses from './pages/Addresses'
+import Checkout from './pages/Checkout'
+import Orders from './pages/Orders'
+import OrderDetail from './pages/OrderDetail'
 
 function Layout({ children }) {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
       <main className="flex-1">{children}</main>
-    </div>
-  )
-}
-
-function Placeholder({ title }) {
-  return (
-    <div className="mx-auto max-w-7xl px-4 py-16 text-center text-muted">
-      <h1 className="mb-2 text-2xl font-bold text-ink">{title}</h1>
-      <p>Coming soon.</p>
     </div>
   )
 }
@@ -49,9 +46,12 @@ export default function App() {
               <Route path="/reset-password" element={<ResetPassword />} />
 
               <Route element={<ProtectedRoute />}>
-                <Route path="/cart" element={<Placeholder title="Cart" />} />
-                <Route path="/wishlist" element={<Placeholder title="Wishlist" />} />
-                <Route path="/orders" element={<Placeholder title="Orders" />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/wishlist" element={<Wishlist />} />
+                <Route path="/addresses" element={<Addresses />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/orders" element={<Orders />} />
+                <Route path="/orders/:id" element={<OrderDetail />} />
               </Route>
             </Routes>
           </Layout>
