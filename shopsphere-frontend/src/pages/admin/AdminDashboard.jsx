@@ -24,15 +24,26 @@ function StatCard({ label, value }) {
 
 export default function AdminDashboard() {
   const [period, setPeriod] = useState('month')
+  const [customFrom, setCustomFrom] = useState('')
+  const [customTo, setCustomTo] = useState('')
+  const [customRange, setCustomRange] = useState(null)
   const [summary, setSummary] = useState(null)
   const [recentOrders, setRecentOrders] = useState([])
   const [lowStock, setLowStock] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  const rangeParams = customRange
+    ? { from: `${customRange.from}T00:00:00`, to: `${customRange.to}T23:59:59` }
+    : { period }
+
   useEffect(() => {
     setLoading(true)
-    Promise.all([getDashboardSummary({ period }), getRecentOrders({ limit: 8, period }), getLowStockProducts(5)])
+    Promise.all([
+      getDashboardSummary(rangeParams),
+      getRecentOrders({ limit: 8, ...rangeParams }),
+      getLowStockProducts(5),
+    ])
       .then(([summaryData, orders, lowStockProducts]) => {
         setSummary(summaryData)
         setRecentOrders(orders)
@@ -40,26 +51,71 @@ export default function AdminDashboard() {
       })
       .catch((err) => setError(extractErrorMessage(err)))
       .finally(() => setLoading(false))
-  }, [period])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [period, customRange])
+
+  const selectPeriod = (value) => {
+    setCustomRange(null)
+    setCustomFrom('')
+    setCustomTo('')
+    setPeriod(value)
+  }
+
+  const applyCustomRange = () => {
+    if (!customFrom || !customTo) return
+    setCustomRange({ from: customFrom, to: customTo })
+  }
 
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-xl font-bold text-ink">Dashboard</h1>
-        <div className="flex gap-1 rounded-xl border border-slate-200 bg-surface p-1">
-          {PERIODS.map((p) => (
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex gap-1 rounded-xl border border-slate-200 bg-surface p-1">
+            {PERIODS.map((p) => (
+              <button
+                key={p.value || 'all'}
+                onClick={() => selectPeriod(p.value)}
+                className={`rounded-lg px-3 py-1.5 text-xs font-medium ${
+                  !customRange && period === p.value ? 'bg-primary text-white' : 'text-ink hover:bg-slate-100'
+                }`}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-surface p-1.5">
+            <input
+              type="date"
+              value={customFrom}
+              onChange={(e) => setCustomFrom(e.target.value)}
+              className="rounded-lg border border-slate-300 px-2 py-1 text-xs text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
+            <span className="text-xs text-muted">to</span>
+            <input
+              type="date"
+              value={customTo}
+              min={customFrom || undefined}
+              onChange={(e) => setCustomTo(e.target.value)}
+              className="rounded-lg border border-slate-300 px-2 py-1 text-xs text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
             <button
-              key={p.value || 'all'}
-              onClick={() => setPeriod(p.value)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium ${
-                period === p.value ? 'bg-primary text-white' : 'text-ink hover:bg-slate-100'
-              }`}
+              onClick={applyCustomRange}
+              disabled={!customFrom || !customTo}
+              className="rounded-lg bg-primary px-3 py-1 text-xs font-medium text-white hover:bg-primary-dark disabled:opacity-50"
             >
-              {p.label}
+              Apply
             </button>
-          ))}
+          </div>
         </div>
       </div>
+
+      {customRange && (
+        <p className="mb-4 text-xs text-muted">
+          Showing {customRange.from} to {customRange.to}
+        </p>
+      )}
 
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
       {loading ? (
