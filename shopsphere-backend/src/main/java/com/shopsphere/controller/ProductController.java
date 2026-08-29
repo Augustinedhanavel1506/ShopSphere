@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,8 +31,8 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public List<ProductResponse> getAll(@RequestParam(required = false) Long categoryId) {
-        return productService.getAll(categoryId);
+    public List<ProductResponse> getAll(Authentication authentication, @RequestParam(required = false) Long categoryId) {
+        return productService.getAll(categoryId, isAdmin(authentication));
     }
 
     @GetMapping("/{id}")
@@ -40,8 +41,8 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public List<ProductResponse> search(@RequestParam String q) {
-        return productService.search(q);
+    public List<ProductResponse> search(Authentication authentication, @RequestParam String q) {
+        return productService.search(q, isAdmin(authentication));
     }
 
     @PostMapping
@@ -62,5 +63,10 @@ public class ProductController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         productService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private boolean isAdmin(Authentication authentication) {
+        return authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
     }
 }

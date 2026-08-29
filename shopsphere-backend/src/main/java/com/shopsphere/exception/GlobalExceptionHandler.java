@@ -3,6 +3,7 @@ package com.shopsphere.exception;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -60,6 +61,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleEmailNotVerified(EmailNotVerifiedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ErrorResponse.of(HttpStatus.FORBIDDEN.value(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.of(HttpStatus.CONFLICT.value(),
+                        "This action conflicts with existing related data (e.g. it's referenced by an order) and cannot be completed."));
     }
 
     @ExceptionHandler(AccessDeniedException.class)

@@ -32,18 +32,23 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final InventoryService inventoryService;
 
-    public List<ProductResponse> getAll(Long categoryId) {
-        List<Product> products = categoryId != null
-                ? productRepository.findByCategoryId(categoryId)
-                : productRepository.findAll();
+    public List<ProductResponse> getAll(Long categoryId, boolean includeInactive) {
+        List<Product> products;
+        if (categoryId != null) {
+            products = includeInactive
+                    ? productRepository.findByCategoryId(categoryId)
+                    : productRepository.findByActiveTrueAndCategoryId(categoryId);
+        } else {
+            products = includeInactive ? productRepository.findAll() : productRepository.findByActiveTrue();
+        }
         return products.stream().map(this::toResponse).toList();
     }
 
-    public List<ProductResponse> search(String query) {
-        return productRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query)
-                .stream()
-                .map(this::toResponse)
-                .toList();
+    public List<ProductResponse> search(String query, boolean includeInactive) {
+        List<Product> products = includeInactive
+                ? productRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query)
+                : productRepository.findByActiveTrueAndNameContainingIgnoreCaseOrActiveTrueAndDescriptionContainingIgnoreCase(query, query);
+        return products.stream().map(this::toResponse).toList();
     }
 
     public ProductResponse getById(Long id) {

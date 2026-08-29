@@ -10,7 +10,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findByCategoryId(Long categoryId);
 
+    List<Product> findByActiveTrue();
+
+    List<Product> findByActiveTrueAndCategoryId(Long categoryId);
+
     List<Product> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String description);
+
+    List<Product> findByActiveTrueAndNameContainingIgnoreCaseOrActiveTrueAndDescriptionContainingIgnoreCase(
+            String name, String description);
 
     boolean existsBySku(String sku);
 
