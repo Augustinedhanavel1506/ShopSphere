@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { getAllOrdersAdmin } from '../../services/orders'
 import { extractErrorMessage } from '../../services/errorUtils'
 import { useToast } from '../../context/ToastContext'
@@ -10,9 +10,14 @@ const STATUSES = ['', 'PENDING', 'PAID', 'CONFIRMED', 'PROCESSING', 'SHIPPED', '
 
 export default function AdminOrders() {
   const { showToast } = useToast()
-  const [status, setStatus] = useState('')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [status, setStatus] = useState(searchParams.get('status') || '')
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    setStatus(searchParams.get('status') || '')
+  }, [searchParams])
 
   useEffect(() => {
     setLoading(true)
@@ -29,7 +34,7 @@ export default function AdminOrders() {
         <h1 className="text-xl font-bold text-ink">Orders</h1>
         <select
           value={status}
-          onChange={(e) => setStatus(e.target.value)}
+          onChange={(e) => setSearchParams(e.target.value ? { status: e.target.value } : {})}
           className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
         >
           {STATUSES.map((s) => (

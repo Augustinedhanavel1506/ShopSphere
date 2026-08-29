@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   ResponsiveContainer,
-  AreaChart,
-  Area,
   BarChart,
   Bar,
+  PieChart,
+  Pie,
   Cell,
+  Legend,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -19,8 +20,10 @@ import {
   getOrdersByStatus,
   getRevenueTrend,
 } from '../../services/dashboard'
+import { getAllOrdersAdmin } from '../../services/orders'
 import { extractErrorMessage } from '../../services/errorUtils'
 import Card from '../../components/Card'
+import Modal from '../../components/Modal'
 import OrderStatusBadge from '../../components/OrderStatusBadge'
 
 const PERIODS = [
@@ -51,6 +54,7 @@ function StatCard({ label, value }) {
 }
 
 export default function AdminDashboard() {
+  const navigate = useNavigate()
   const [period, setPeriod] = useState('month')
   const [customFrom, setCustomFrom] = useState('')
   const [customTo, setCustomTo] = useState('')
@@ -62,6 +66,9 @@ export default function AdminDashboard() {
   const [revenueTrend, setRevenueTrend] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [dayDrilldown, setDayDrilldown] = useState(null)
+  const [dayOrders, setDayOrders] = useState(null)
+  const [dayLoading, setDayLoading] = useState(false)
 
   const rangeParams = customRange
     ? { from: `${customRange.from}T00:00:00`, to: `${customRange.to}T23:59:59` }
@@ -98,6 +105,25 @@ export default function AdminDashboard() {
   const applyCustomRange = () => {
     if (!customFrom || !customTo) return
     setCustomRange({ from: customFrom, to: customTo })
+  }
+
+  const handleStatusSliceClick = (status) => {
+    navigate(`/admin/orders?status=${status}`)
+  }
+
+  const handleRevenueBarClick = async (point) => {
+    setDayDrilldown(point.date)
+    setDayLoading(true)
+    setDayOrders(null)
+    try {
+      const allOrders = await getAllOrdersAdmin()
+      const matches = allOrders.filter((o) => o.createdAt.slice(0, 10) === point.date)
+      setDayOrders(matches)
+    } catch (err) {
+      setError(extractErrorMessage(err))
+    } finally {
+      setDayLoading(false)
+    }
   }
 
   return (
@@ -170,18 +196,13 @@ export default function AdminDashboard() {
 
             <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr]">
               <Card>
-                <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted">Revenue Trend</h2>
+                <h2 className="mb-1 text-sm font-semibold uppercase tracking-wide text-muted">Revenue Trend</h2>
+                <p className="mb-3 text-xs text-muted">Click a bar to see that day's orders</p>
                 {revenueTrend.length === 0 ? (
                   <p className="text-sm text-muted">No orders in this period.</p>
                 ) : (
                   <ResponsiveContainer width="100%" height={220}>
-                    <AreaChart data={revenueTrend} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
-                      <defs>
-                        <linearGradient id="revenueFill" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.35} />
-                          <stop offset="95%" stopColor="#4f46e5" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
+                    <BarChart data={revenueTrend} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                       <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#64748b' }} tickLine={false} axisLine={false} />
                       <YAxis
@@ -191,43 +212,52 @@ export default function AdminDashboard() {
                         tickFormatter={(v) => `$${v}`}
                       />
                       <Tooltip
-                        formatter={(value, name) => [name === 'revenue' ? `$${Number(value).toFixed(2)}` : value, name === 'revenue' ? 'Revenue' : 'Orders']}
+                        cursor={{ fill: '#4f46e5', fillOpacity: 0.08 }}
+                        formatter={(value, name) => [
+                          name === 'revenue' ? `$${Number(value).toFixed(2)}` : value,
+                          name === 'revenue' ? 'Revenue' : 'Orders',
+                        ]}
                       />
-                      <Area type="monotone" dataKey="revenue" stroke="#4f46e5" strokeWidth={2} fill="url(#revenueFill)" />
-                    </AreaChart>
+                      <Bar dataKey="revenue" radius={[6, 6, 0, 0]} cursor="pointer" onClick={handleRevenueBarClick}>
+                        {revenueTrend.map((point) => (
+                          <Cell key={point.date} fill="#4f46e5" />
+                        ))}
+                      </Bar>
+                    </BarChart>
                   </ResponsiveContainer>
                 )}
               </Card>
 
               <Card>
-                <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted">Orders by Status</h2>
+                <h2 className="mb-1 text-sm font-semibold uppercase tracking-wide text-muted">Orders by Status</h2>
+                <p className="mb-3 text-xs text-muted">Click a slice to view those orders</p>
                 {!ordersByStatus || Object.values(ordersByStatus).every((v) => v === 0) ? (
                   <p className="text-sm text-muted">No orders in this period.</p>
                 ) : (
                   <ResponsiveContainer width="100%" height={220}>
-                    <BarChart
-                      data={Object.entries(ordersByStatus).map(([status, count]) => ({ status, count }))}
-                      margin={{ top: 5, right: 10, left: 0, bottom: 0 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                      <XAxis
-                        dataKey="status"
-                        tick={{ fontSize: 10, fill: '#64748b' }}
-                        tickLine={false}
-                        axisLine={false}
-                        interval={0}
-                        angle={-25}
-                        textAnchor="end"
-                        height={50}
-                      />
-                      <YAxis tick={{ fontSize: 11, fill: '#64748b' }} tickLine={false} axisLine={false} allowDecimals={false} />
+                    <PieChart>
+                      <Pie
+                        data={Object.entries(ordersByStatus)
+                          .filter(([, count]) => count > 0)
+                          .map(([status, count]) => ({ status, count }))}
+                        dataKey="count"
+                        nameKey="status"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={80}
+                        cursor="pointer"
+                        label={({ status, count }) => `${status} (${count})`}
+                        onClick={(entry) => handleStatusSliceClick(entry.status)}
+                      >
+                        {Object.entries(ordersByStatus)
+                          .filter(([, count]) => count > 0)
+                          .map(([status]) => (
+                            <Cell key={status} fill={STATUS_COLORS[status] ?? '#94a3b8'} />
+                          ))}
+                      </Pie>
                       <Tooltip />
-                      <Bar dataKey="count" radius={[6, 6, 0, 0]}>
-                        {Object.keys(ordersByStatus).map((status) => (
-                          <Cell key={status} fill={STATUS_COLORS[status] ?? '#94a3b8'} />
-                        ))}
-                      </Bar>
-                    </BarChart>
+                      <Legend wrapperStyle={{ fontSize: '11px' }} />
+                    </PieChart>
                   </ResponsiveContainer>
                 )}
               </Card>
@@ -284,6 +314,31 @@ export default function AdminDashboard() {
             </div>
           </>
         )
+      )}
+
+      {dayDrilldown && (
+        <Modal title={`Orders on ${dayDrilldown}`} onClose={() => setDayDrilldown(null)}>
+          {dayLoading ? (
+            <p className="text-sm text-muted">Loading orders…</p>
+          ) : dayOrders && dayOrders.length === 0 ? (
+            <p className="text-sm text-muted">No orders were placed on this day.</p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {dayOrders?.map((order) => (
+                <Link
+                  key={order.id}
+                  to={`/admin/orders/${order.id}`}
+                  className="flex items-center justify-between rounded-lg px-2 py-2 text-sm hover:bg-slate-50"
+                >
+                  <span className="font-medium text-ink">#{order.id}</span>
+                  <span className="flex-1 truncate px-3 text-muted">{order.customerEmail}</span>
+                  <span className="px-3 text-ink">${Number(order.totalAmount).toFixed(2)}</span>
+                  <OrderStatusBadge status={order.status} />
+                </Link>
+              ))}
+            </div>
+          )}
+        </Modal>
       )}
     </div>
   )
