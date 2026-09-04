@@ -65,17 +65,17 @@ export default function ProductCard({ product }) {
   return (
     <Link
       to={`/products/${product.id}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-surface shadow-sm transition-shadow hover:shadow-md"
+      className="group flex flex-col overflow-hidden rounded-lg border border-slate-200 bg-surface transition-shadow hover:shadow-md"
     >
       <div className="relative flex aspect-square items-center justify-center bg-slate-50">
         {hasDiscount && (
-          <span className="absolute left-2 top-2 rounded-full bg-cta px-2 py-0.5 text-xs font-bold text-white">
+          <span className="absolute left-1.5 top-1.5 rounded bg-cta px-1.5 py-0.5 text-[10px] font-bold text-white">
             -{product.discountPercentage}%
           </span>
         )}
         <button
           onClick={handleAddToWishlist}
-          className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-ink shadow hover:bg-white"
+          className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-white/90 text-xs text-ink shadow hover:bg-white"
           aria-label="Add to wishlist"
         >
           ♡
@@ -83,17 +83,17 @@ export default function ProductCard({ product }) {
         {image ? (
           <img src={image} alt={product.name} className="h-full w-full object-cover" />
         ) : (
-          <span className="text-4xl">📦</span>
+          <span className="text-2xl">📦</span>
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-1.5 p-4">
-        <h3 className="line-clamp-1 text-sm font-semibold text-ink">{product.name}</h3>
+      <div className="flex flex-1 flex-col gap-1 p-2.5">
+        <h3 className="line-clamp-2 min-h-[2.25rem] text-xs font-medium text-ink">{product.name}</h3>
 
-        <div className="flex items-center gap-2">
-          <span className="text-base font-bold text-ink">${Number(product.price).toFixed(2)}</span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-sm font-bold text-ink">${Number(product.price).toFixed(2)}</span>
           {hasDiscount && (
-            <span className="text-xs text-muted line-through">${Number(product.originalPrice).toFixed(2)}</span>
+            <span className="text-[11px] text-muted line-through">${Number(product.originalPrice).toFixed(2)}</span>
           )}
         </div>
 
@@ -108,7 +108,7 @@ export default function ProductCard({ product }) {
         <Button
           onClick={handleAddToCart}
           disabled={product.active === false || inStock === false}
-          className="mt-2 w-full"
+          className="mt-1 w-full !py-1.5 !text-xs"
           variant="primary"
         >
           Add to Cart
