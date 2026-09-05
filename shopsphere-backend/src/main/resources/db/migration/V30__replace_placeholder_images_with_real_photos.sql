@@ -1,0 +1,180 @@
+-- Replace placehold.co colored-tile images with real, individually verified product photos.
+-- Every URL below was resolved to one specific photo (not a keyword-redirect service),
+-- downloaded, and visually confirmed appropriate via manual review before being used here.
+-- Source: Wikimedia Commons (public domain / CC-licensed, preferred) or a specific verified
+-- images.unsplash.com/photo-<id> URL (fallback where Commons had nothing suitable).
+-- Rows noting "LOW CONFIDENCE" in the accompanying mapping report are on-topic and appropriate
+-- but an imperfect match to the exact product variant (e.g. color, generation, sub-style).
+
+
+-- Electronics
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/b/b5/System76_product_pang12.webp' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-101');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/1/10/General_Mobile_4G.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-102');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/4/45/Samsung_Galaxy_Tab_3_10.1-inch_Android_Tablet.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-103');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/6/6c/PineTime_smartwatch.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-104');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/6/67/JBL_Flip_3_bluetooth_speaker_%28DSCF2653%29.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-105');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/4/46/MS-TW21NV%E3%81%AE%E7%94%BB%E5%83%8F_2.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-106');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/c/c4/JBL_LIVE_650_BTNC_%28Over-Ear_Noise_Cancelling_Headphone%29._%2851127342181%29.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-HEAD-1');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/0/05/Microsoft-Xbox-One-Console-Set-wKinect.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-107');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/7/75/Canon_EOS_R3.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-108');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Quadcopter_camera_drone_in_flight.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-109');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/2/26/External_portable_hard_drive.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-110');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/5/54/Logitech_Brio_301_webcam_HS1.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-111');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/5/53/Wi-fi_router.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-112');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Power_bank.JPG' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-113');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/1/13/EVGA_GeForce_GTX_1050_Superclocked%2C_front.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-114');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/0/0d/Logitech-g910_%2816093947623%29.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'KB-001');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/0/0d/Logitech-g910_%2816093947623%29.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-115');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/9/96/MiNe-M_100-5746U_%2840440512265%29.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'MOUSE-PREM-1');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/9/96/MiNe-M_100-5746U_%2840440512265%29.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-116');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/8/8d/HP_LaserJet_1020_printer.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-117');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/0/04/Dell_S3423DWC_unboxing%2C_desk_setup_1_%28cropped%29.png' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-MON-1');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/0/04/Dell_S3423DWC_unboxing%2C_desk_setup_1_%28cropped%29.png' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-118');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/b/bf/Seeser_front_view.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-119');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/8/81/Samsung_TV_UE55F9000_with_Sonos_wireless_speakers_PLAY_5_and_Sonos_soundbar.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-120');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/c/c1/Outdoor_wireless_security_camera_at_Nuthurst%2C_Sussex_1.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-121');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/d/da/Filament_Led_%28140071415%29.jpeg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-122');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Fitbit_Alta_HR.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-123');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/0/05/GoPro_Hero_9_Black_-_Front_2.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-124');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/5/54/Oculus_Quest_II_%2850844634326%29.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-125');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/4/45/2023_Amazon_Kindle_Paperwhite_%282%29.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-126');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/1/1f/USB-C_Digital_AV_Multiport_Adapter.jpeg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-127');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/b/b8/AKG_Perception_120_USB_condenser_microphone_with_SH_100_shock_mount.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-128');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/c/c2/Hand_drawing_on_a_graphic_tablet.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-129');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/1/1d/Earphones_BW_2011-12-10_15-49-08.JPG' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'ELEC-130');
+
+-- Home & Kitchen
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Vitamix_5200_Classic_Blender.jpg/960px-Vitamix_5200_Classic_Blender.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-101');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Oster_2-Slice_Toaster.jpg/960px-Oster_2-Slice_Toaster.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-102');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/California_Kitchen_Microwave_Oven.jpg/960px-California_Kitchen_Microwave_Oven.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-103');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Air_Fryer_2020.jpg/960px-Air_Fryer_2020.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-104');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Hamilton_Beach_home_coffee_maker.jpg/960px-Hamilton_Beach_home_coffee_maker.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-105');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/2023_Czajnik_elektryczny_N%27OVEEN.jpg/960px-2023_Czajnik_elektryczny_N%27OVEEN.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-106');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/2023_Czajnik_elektryczny_Bosch_%281%29.jpg/960px-2023_Czajnik_elektryczny_Bosch_%281%29.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-127');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1607637508078-17fa89da51b6' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-107');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Dinner_plates.jpg/960px-Dinner_plates.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-108');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Frying_pan_with_black_handle.jpg/960px-Frying_pan_with_black_handle.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-109');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1683570687112-90cbc0fd5019' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-110');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1609915437016-85693e56470f' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-111');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1547104442-044448b73426' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-112');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1564019472017-b51398323027' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-113');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1771039621944-4cce4691774a' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-114');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Dyson_Cyclone_V10_Absolute_cordless_stick_vacuum.jpg/960px-Dyson_Cyclone_V10_Absolute_cordless_stick_vacuum.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-115');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Electric_steam_iron.jpg/960px-Electric_steam_iron.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-116');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/A_desk_lamp.jpg/960px-A_desk_lamp.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-117');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Modern_functual_kept_battery_driven_wall_clock.jpg/960px-Modern_functual_kept_battery_driven_wall_clock.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-118');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1578298626876-c8e9016d1785' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-119');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/IKEA_shower_curtain_%2845862859051%29.jpg/960px-IKEA_shower_curtain_%2845862859051%29.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-120');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1770299202828-dca13b15ecca' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-121');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1737681938114-ad51332eec97' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-122');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1580116270858-8a0d62b15426' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-123');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1636412191749-53d84f5f3eb0' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-124');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1593143303977-01da2fd61984' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-125');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Cuisinart_food_processor.jpg/960px-Cuisinart_food_processor.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-126');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1579326882518-21eaa7893b02' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-128');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1465161191540-aac346fcbaff' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-129');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1757688525739-8d1e13daf44f' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-130');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1584990347193-6bebebfeaeee' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-COOKSET-1');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1696542933572-55e32cc025f4' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'HOME-MUGSET-1');
+
+-- Books
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1573496528681-9b0f4fb0c660' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-102');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1573496528681-9b0f4fb0c660' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-117');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1573496528681-9b0f4fb0c660' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-127');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1573496528681-9b0f4fb0c660' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-130');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1573496528681-9b0f4fb0c660' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-PRAG-1');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1573496528681-9b0f4fb0c660' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-CLEAN-1');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1591951425600-d09958978584' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-101');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1758279745466-f5f4087a87d6' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-103');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1758279745466-f5f4087a87d6' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-124');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1645497265272-5c92210a18b8' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-104');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1645497265272-5c92210a18b8' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-125');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1767219077120-1aa6d2398717' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-105');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1767219077120-1aa6d2398717' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-129');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1563870958617-9c5a98573e9a' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-106');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1563870958617-9c5a98573e9a' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-122');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1647242824303-49bb8a3891e0' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-107');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1760161627217-3f0124023664' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-108');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1760161627217-3f0124023664' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-128');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1519304520401-239e2a56a1aa' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-109');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1573309463355-c53f9ebea408' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-110');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1491841651911-c44c30c34548' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-111');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1761933296192-d84d3a76053b' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-112');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1526243741027-444d633d7365' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-113');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1618519764620-7403abdbdfe9' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-114');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1535905557558-afc4877a26fc' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-115');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1517673132405-a56a62b18caf' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-116');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1509228468518-180dd4864904' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-118');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1758876569703-ea9b21463691' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-119');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1451226428352-cf66bf8a0317' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-120');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1654099067467-c18c8dec1df4' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-121');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1620628193519-822b8eb8e92f' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-123');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1784719642467-ba7b34c52df3' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'BOOK-126');
+
+-- Fashion
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Crew_neck_T-shirt.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-101');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/3/3b/Blauwe_jeans%2C_skinny_jeans_model%2C_merk_Revers_Jeans%2C_maat_S36%2C_objectnr_86974-3%281%29.JPG' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-102');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/4/46/StateLibQld_1_125207_Joan_Monument_modelling_a_floral_sundress%2C_1938.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-103');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/4/42/Adidas_Helionic_Down_Jacket.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-104');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/8/88/Zelfgebreide_trui_met_v-hals_-_Home_knitted_V-necked_sweater_%284106588198%29.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-105');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/c/c2/Hoodie_m7agar.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-106');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/7/78/Skirt%2C_pleated_%28AM_1999.107.242-7%29.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-107');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/1/1f/Blouse_MET_84.173_CP3.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-108');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/2/26/HK_TKO_%E5%B0%87%E8%BB%8D%E6%BE%B3_Tseung_Kwan_O_PopCorn_mall_shop_Uniqlo_Clothing_color_code_17_Red_%E7%9F%AD%E8%A4%B2_Chino_shorts_%E5%AD%9F%E5%8A%A0%E6%8B%89_Bangladesh_July_2022_Px3.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-109');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/1/14/Attractive_young_woman_have_exercise_with_tape_in_the_gym.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-110');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/b/ba/Overcoat_MET_1973.65.1_F.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-111');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/d/d3/CashScarf.JPG' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-112');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/2/28/Woman_in_sun-hat%2C_Bondi_Beach_%2831668995355%29_%28cropped%29.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-113');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/8/85/American_Optical_Original_Pilot_Aviator_sunglasses.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-114');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/a/a3/Leather_Belt_for_Men_.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-115');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/c/c1/Canvas_two-tone_tote_Navy_and_Natural7_%289038437258%29.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-116');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/b/bb/Leather_Wallet_with_a_Strap_Closure_-_DPLA_-_01e1cfae03bc0ce9106a5a7d5e4a9981_%28page_1%29.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-117');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/a/a5/Black_Converse_sneakers.JPG' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-118');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/8/8f/Chelsea_boot%2C_black.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-119');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/a/a1/Michael_Kors_Molly_Flat_Flache_Sandale_40S5MYFA3L_Kalbsleder_hellbraun_%281%29_%2816808044125%29.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-120');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/9/9b/Crockett_%26_Jones_men%27s_dress_shoes%2C_type_Dalton%2C_black_calf_leather_01.JPG' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-121');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1631180543602-727e1197619d' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-122');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/5/55/Puma_White_Knit_Gloves.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-123');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/5/59/Silk_ties_-_4046.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-124');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/1/14/Man_On_City_Street_%28100739593%29.jpeg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-125');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/3/38/Kurta_churidar_nehru_vest.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-126');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Four_analog_wristwatches_with_watch_straps_from_stainless_steel_-_image_1.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-127');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/a/af/Vintage_step_cut_square_rock_crystal_drop_earrings_%2833513870211%29.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-128');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-129');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1641934777532-d277296b111c' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-130');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/2/27/Denim_jacket_details.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-JACKET-1');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/a/a7/Running_shoes.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'FASH-SNEAKER-1');
+
+-- Sports & Outdoors
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Tennis_Racket_and_Balls.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-101');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/b/be/Isolated_basketball.png' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-102');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/3/3d/Just_a_soccer_ball_(34782492153).jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-103');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/e/e3/TwoDumbbells.JPG' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-104');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/c/cd/Fitness_bar_with_resistance_tube.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-105');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/1/1f/Treadmill_from_Viking_Sport,_front.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-106');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/4/4b/Met_trenta_3k_carbon_mips_bicycle_helmet.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-107');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/4/4a/Trek_7200_(2008).JPG' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-108');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/1/18/Camping_tent_on_tarp.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-109');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Mummy_bag.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-110');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/a/a3/A_backpack_with_trekking_poles_and_shoes.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-111');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/a/ab/Trail_running_shoe.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-112');
+UPDATE product_images SET image_url = 'https://images.unsplash.com/photo-1557127972-1c446ea89ea5' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-113');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/8/8f/Coiled_Chinese_jump_rope.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-114');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/c/c9/Cork_yoga_blocks.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-115');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/f/fc/Telescopic_rod._Lake_Baikal._Eastern_Siberia.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-116');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/b/b7/Street-skateboard.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-117');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/0/0f/Badminton_Racket.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-118');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/6/68/Kashmir_willow_Cricket_Bat.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-119');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Golf_ball_resting_near_fairway_wood.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-120');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/4/42/Swimming_goggles.JPG' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-121');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/a/ab/Snorkeling_gear.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-122');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/f/f6/Double_bentshaft_paddle_wood.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-123');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/e/e4/Climbing_Rope.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-124');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/2/23/Wilson_American_football.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-125');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/1/13/Vintage_Leather_Baseball_Glove.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-126');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/b/bb/Pair_of_boxing_gloves.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-127');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/8/87/Skier_wearing_goggles_and_blue_jacket_(cropped_to_focus_on_helmet_and_goggles).jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-128');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Yellow_Foam_Surfboard_(25839950915).jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-129');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/7/74/Nathan_QuickStart.png' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-130');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/6/6d/Yoga_mat.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-YOGA-1');
+UPDATE product_images SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/0/08/Stainless_Steel_Water_Bottle.jpg' WHERE display_order = 0 AND product_id = (SELECT id FROM products WHERE sku = 'SPORT-BOTTLE-1');

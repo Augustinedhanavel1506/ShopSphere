@@ -5,6 +5,8 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.shopsphere.dto.ProductImageRequest;
@@ -32,23 +34,23 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final InventoryService inventoryService;
 
-    public List<ProductResponse> getAll(Long categoryId, boolean includeInactive) {
-        List<Product> products;
+    public Page<ProductResponse> getAll(Long categoryId, boolean includeInactive, Pageable pageable) {
+        Page<Product> products;
         if (categoryId != null) {
             products = includeInactive
-                    ? productRepository.findByCategoryId(categoryId)
-                    : productRepository.findByActiveTrueAndCategoryId(categoryId);
+                    ? productRepository.findByCategoryId(categoryId, pageable)
+                    : productRepository.findByActiveTrueAndCategoryId(categoryId, pageable);
         } else {
-            products = includeInactive ? productRepository.findAll() : productRepository.findByActiveTrue();
+            products = includeInactive ? productRepository.findAll(pageable) : productRepository.findByActiveTrue(pageable);
         }
-        return products.stream().map(this::toResponse).toList();
+        return products.map(this::toResponse);
     }
 
-    public List<ProductResponse> search(String query, boolean includeInactive) {
-        List<Product> products = includeInactive
-                ? productRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query)
-                : productRepository.findByActiveTrueAndNameContainingIgnoreCaseOrActiveTrueAndDescriptionContainingIgnoreCase(query, query);
-        return products.stream().map(this::toResponse).toList();
+    public Page<ProductResponse> search(String query, boolean includeInactive, Pageable pageable) {
+        Page<Product> products = includeInactive
+                ? productRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query, pageable)
+                : productRepository.findByActiveTrueAndNameContainingIgnoreCaseOrActiveTrueAndDescriptionContainingIgnoreCase(query, query, pageable);
+        return products.map(this::toResponse);
     }
 
     public ProductResponse getById(Long id) {

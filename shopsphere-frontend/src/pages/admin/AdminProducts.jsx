@@ -33,9 +33,9 @@ export default function AdminProducts() {
   const [showForm, setShowForm] = useState(false)
 
   const load = () =>
-    Promise.all([getProducts(), getCategories()])
-      .then(([productList, categoryList]) => {
-        setProducts(productList)
+    Promise.all([getProducts({ size: 1000 }), getCategories()])
+      .then(([productPage, categoryList]) => {
+        setProducts(productPage.content)
         setCategories(categoryList)
       })
       .catch((err) => showToast(extractErrorMessage(err), 'error'))

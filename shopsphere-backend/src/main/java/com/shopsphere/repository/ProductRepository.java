@@ -1,23 +1,24 @@
 package com.shopsphere.repository;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.shopsphere.entity.Product;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    List<Product> findByCategoryId(Long categoryId);
+    Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
 
-    List<Product> findByActiveTrue();
+    Page<Product> findByActiveTrue(Pageable pageable);
 
-    List<Product> findByActiveTrueAndCategoryId(Long categoryId);
+    Page<Product> findByActiveTrueAndCategoryId(Long categoryId, Pageable pageable);
 
-    List<Product> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String description);
+    Page<Product> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+            String name, String description, Pageable pageable);
 
-    List<Product> findByActiveTrueAndNameContainingIgnoreCaseOrActiveTrueAndDescriptionContainingIgnoreCase(
-            String name, String description);
+    Page<Product> findByActiveTrueAndNameContainingIgnoreCaseOrActiveTrueAndDescriptionContainingIgnoreCase(
+            String name, String description, Pageable pageable);
 
     boolean existsBySku(String sku);
 

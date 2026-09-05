@@ -11,7 +11,7 @@ export default function Home() {
 
   useEffect(() => {
     getCategories().then(setCategories).catch(() => setCategories([]))
-    getProducts().then((all) => setProducts(all.slice(0, 8))).catch(() => setProducts([]))
+    getProducts({ size: 8 }).then((res) => setProducts(res.content)).catch(() => setProducts([]))
   }, [])
 
   return (

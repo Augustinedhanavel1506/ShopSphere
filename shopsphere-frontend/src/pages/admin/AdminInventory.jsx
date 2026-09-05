@@ -17,9 +17,9 @@ export default function AdminInventory() {
   const [history, setHistory] = useState([])
 
   const load = async () => {
-    const products = await getProducts()
+    const productPage = await getProducts({ size: 1000 })
     const withInventory = await Promise.all(
-      products.map((p) => getInventory(p.id).then((inv) => ({ product: p, inventory: inv }))),
+      productPage.content.map((p) => getInventory(p.id).then((inv) => ({ product: p, inventory: inv }))),
     )
     setRows(withInventory)
   }

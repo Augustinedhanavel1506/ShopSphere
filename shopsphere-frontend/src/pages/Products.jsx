@@ -5,13 +5,18 @@ import { getProducts, searchProducts } from '../services/products'
 import { extractErrorMessage } from '../services/errorUtils'
 import ProductCard from '../components/ProductCard'
 
+const PAGE_SIZE = 20
+
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams()
   const categoryId = searchParams.get('categoryId') || ''
   const query = searchParams.get('q') || ''
+  const page = Math.max(0, Number(searchParams.get('page') || 0))
 
   const [categories, setCategories] = useState([])
   const [products, setProducts] = useState([])
+  const [totalPages, setTotalPages] = useState(0)
+  const [totalElements, setTotalElements] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [searchInput, setSearchInput] = useState(query)
@@ -23,12 +28,26 @@ export default function Products() {
   useEffect(() => {
     setLoading(true)
     setError('')
-    const request = query ? searchProducts(query) : getProducts({ categoryId: categoryId || undefined })
+    const request = query
+      ? searchProducts(query, { page, size: PAGE_SIZE })
+      : getProducts({ categoryId: categoryId || undefined, page, size: PAGE_SIZE })
     request
-      .then(setProducts)
+      .then((res) => {
+        setProducts(res.content)
+        setTotalPages(res.page.totalPages)
+        setTotalElements(res.page.totalElements)
+      })
       .catch((err) => setError(extractErrorMessage(err)))
       .finally(() => setLoading(false))
-  }, [categoryId, query])
+  }, [categoryId, query, page])
+
+  const goToPage = (nextPage) => {
+    const next = new URLSearchParams(searchParams)
+    if (nextPage > 0) next.set('page', String(nextPage))
+    else next.delete('page')
+    setSearchParams(next)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   const handleSearchSubmit = (e) => {
     e.preventDefault()
@@ -109,14 +128,63 @@ export default function Products() {
           )}
 
           {!loading && products.length > 0 && (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-              {products.map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                {products.map((p) => (
+                  <ProductCard key={p.id} product={p} />
+                ))}
+              </div>
+              <Pagination page={page} totalPages={totalPages} totalElements={totalElements} onPageChange={goToPage} />
+            </>
           )}
         </div>
       </div>
+    </div>
+  )
+}
+
+function Pagination({ page, totalPages, totalElements, onPageChange }) {
+  if (totalPages <= 1) return null
+
+  const pageNumbers = []
+  const start = Math.max(0, Math.min(page - 2, totalPages - 5))
+  const end = Math.min(totalPages, start + 5)
+  for (let i = start; i < end; i++) pageNumbers.push(i)
+
+  return (
+    <div className="mt-8 flex flex-col items-center gap-2">
+      <p className="text-xs text-muted">
+        Page {page + 1} of {totalPages} &middot; {totalElements} products
+      </p>
+      <nav className="flex items-center gap-1">
+        <button
+          onClick={() => onPageChange(page - 1)}
+          disabled={page === 0}
+          className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-ink hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          Prev
+        </button>
+        {start > 0 && <span className="px-1 text-sm text-muted">…</span>}
+        {pageNumbers.map((n) => (
+          <button
+            key={n}
+            onClick={() => onPageChange(n)}
+            className={`rounded-lg px-3 py-1.5 text-sm ${
+              n === page ? 'bg-primary font-semibold text-white' : 'border border-slate-300 text-ink hover:bg-slate-50'
+            }`}
+          >
+            {n + 1}
+          </button>
+        ))}
+        {end < totalPages && <span className="px-1 text-sm text-muted">…</span>}
+        <button
+          onClick={() => onPageChange(page + 1)}
+          disabled={page >= totalPages - 1}
+          className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-ink hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          Next
+        </button>
+      </nav>
     </div>
   )
 }

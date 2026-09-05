@@ -1,7 +1,8 @@
 package com.shopsphere.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,8 +32,9 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public List<ProductResponse> getAll(Authentication authentication, @RequestParam(required = false) Long categoryId) {
-        return productService.getAll(categoryId, isAdmin(authentication));
+    public PagedModel<ProductResponse> getAll(Authentication authentication, @RequestParam(required = false) Long categoryId,
+            @PageableDefault(size = 20) Pageable pageable) {
+        return new PagedModel<>(productService.getAll(categoryId, isAdmin(authentication), pageable));
     }
 
     @GetMapping("/{id}")
@@ -41,8 +43,9 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public List<ProductResponse> search(Authentication authentication, @RequestParam String q) {
-        return productService.search(q, isAdmin(authentication));
+    public PagedModel<ProductResponse> search(Authentication authentication, @RequestParam String q,
+            @PageableDefault(size = 20) Pageable pageable) {
+        return new PagedModel<>(productService.search(q, isAdmin(authentication), pageable));
     }
 
     @PostMapping
